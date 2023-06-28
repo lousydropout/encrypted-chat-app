@@ -1,4 +1,4 @@
-import { balance, getBalance } from "../utils";
+import { balance, getBalance } from "../helpers/utils";
 
 const Balance = () => (
   <div class="flex justify-between items-center">

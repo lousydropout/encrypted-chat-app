@@ -1,7 +1,9 @@
 import { Buffer } from "buffer";
 import { Show, createSignal } from "solid-js";
-import { setBalance } from "../utils";
+import { setBalance } from "../helpers/utils";
 import phantomIcon from "../assets/phantom-logo.png";
+import logoUrl from "../assets/logo.svg";
+import { hasLoggedIn } from "../store/hasLoggedIn";
 
 window.Buffer = Buffer;
 const [walletPubkey, setWalletPubkey] = createSignal(null);
@@ -23,7 +25,7 @@ function Header(props) {
       class={`flex items-center justify-end 
         space-x-2 px-4 py-3
         border-2 rounded-lg
-        bg-violet-600 text-white hover:bg-violet-700
+        border-blue-400 text-blue-400 hover:border-blue-500 hover:text-blue-500
         hover:cursor-pointer
         relative active:top-1`}
     >
@@ -51,7 +53,7 @@ function Header(props) {
       class={`flex items-center justify-end 
       space-x-2 px-4 py-3
       border-2 rounded-lg
-      bg-violet-600 text-white hover:bg-violet-700
+      border-blue-500 text-white hover:border-blue-600
       hover:cursor-pointer
       relative active:top-1`}
     >
@@ -65,7 +67,14 @@ function Header(props) {
 
   return (
     <div className="flex justify-between items-center mb-12">
-      <h1 class="text-4xl">{props.title}</h1>
+      <div class="flex justify-start items-end">
+        <h1 class="text-4xl">{props.title}</h1>
+        <img
+          src={logoUrl}
+          alt="Neurodeploy logo"
+          class="my-2 sm:mb-6 w-10 sm:w-10"
+        />
+      </div>
       <Show when={walletPubkey()} fallback={ConnectWallet}>
         <DisconnectWallet />
       </Show>

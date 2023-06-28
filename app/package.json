@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "description": "",
   "scripts": {
-    "start": "vite",
-    "dev": "vite",
-    "build": "vite build",
+    "copy-idl": "cp ../target/idl/encrypted.json src/assets/",
+    "start": "pnpm copy-idl; vite",
+    "dev": "pnpm copy-idl; vite",
+    "build": "pnpm copy-idl; vite build",
     "serve": "vite preview"
   },
   "license": "MIT",

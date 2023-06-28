@@ -1,6 +1,6 @@
 import { Connection, LAMPORTS_PER_SOL, clusterApiUrl } from "@solana/web3.js";
 import { AnchorProvider } from "@coral-xyz/anchor";
-import { walletPubkey } from "./components/Header";
+import { walletPubkey } from "../components/Header";
 import { createSignal } from "solid-js";
 
 const [balance, setBalance] = createSignal(null);

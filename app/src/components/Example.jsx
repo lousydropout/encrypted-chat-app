@@ -5,7 +5,7 @@ import {
   importPublicKey,
   keypair,
   setKeypair,
-  strigifiedKeypair,
+  stringifiedKeypair,
   stringifyKeypair,
 } from "../crypto.js";
 
@@ -92,16 +92,16 @@ const Example = () => {
       <div class="p-4 border-2 rounded-md h-32 w-full">{decMessage()}</div>
       <br />
       <button onClick={stringifyKeypair} class="border-2 rounded-lg p-4">
-        Strigify
+        Stringify
       </button>
-      <Show when={strigifiedKeypair()}>
-        <div>{strigifiedKeypair().publicKey}</div>
-        <div>{strigifiedKeypair().privateKey}</div>
+      <Show when={stringifiedKeypair}>
+        <div>{stringifiedKeypair.publicKey}</div>
+        <div>{stringifiedKeypair.privateKey}</div>
         <a
           onClick={downloadPem}
           class="border-2 rounded-lg p-4"
           href={`data:text/plain;charset=utf-8,${encodeURIComponent(
-            strigifiedKeypair().privateKey
+            stringifiedKeypair.privateKey
           )}`}
           download="private"
         >

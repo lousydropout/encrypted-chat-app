@@ -1,7 +1,8 @@
 import { createSignal } from "solid-js";
+import { createStore } from "solid-js/store";
 
 const [keypair, setKeypair] = createSignal(null);
-const [strigifiedKeypair, setStrigifiedKeypair] = createSignal(null);
+const [stringifiedKeypair, setStringifiedKeypair] = createStore({});
 
 /*
   Convert  an ArrayBuffer into a string
@@ -27,7 +28,8 @@ async function exportPublicKey(key) {
   const exportedAsString = ab2str(exported);
   const exportedAsBase64 = window.btoa(exportedAsString);
 
-  return `-----BEGIN PUBLIC KEY-----\n${exportedAsBase64}\n-----END PUBLIC KEY-----`;
+  return exportedAsBase64;
+  // return `-----BEGIN PUBLIC KEY-----\n${exportedAsBase64}\n-----END PUBLIC KEY-----`;
 }
 
 async function exportPrivateKey(key) {
@@ -35,7 +37,8 @@ async function exportPrivateKey(key) {
   const exportedAsString = ab2str(exported);
   const exportedAsBase64 = window.btoa(exportedAsString);
 
-  return `-----BEGIN PRIVATE KEY-----\n${exportedAsBase64}\n-----END PRIVATE KEY-----`;
+  return exportedAsBase64;
+  // return `-----BEGIN PRIVATE KEY-----\n${exportedAsBase64}\n-----END PRIVATE KEY-----`;
 }
 
 const generateKey = async () => {
@@ -43,7 +46,7 @@ const generateKey = async () => {
     {
       name: "RSA-OAEP",
       // Consider using a 4096-bit key for systems that require long-term security
-      modulusLength: 2048,
+      modulusLength: 256,
       publicExponent: new Uint8Array([1, 0, 1]),
       hash: "SHA-256",
     },
@@ -59,7 +62,9 @@ const stringifyKeypair = async () => {
   const publicKey = await exportPublicKey(keypair().publicKey);
   const privateKey = await exportPrivateKey(keypair().privateKey);
 
-  setStrigifiedKeypair({ publicKey, privateKey });
+  console.log("publicKey: ", publicKey);
+  console.log("privateKey: ", privateKey);
+  setStringifiedKeypair({ publicKey, privateKey });
 };
 
 /*
@@ -128,7 +133,8 @@ export {
   keypair,
   setKeypair,
   stringifyKeypair,
-  strigifiedKeypair,
+  stringifiedKeypair,
+  setStringifiedKeypair,
   importPublicKey,
   importPrivateKey,
 };

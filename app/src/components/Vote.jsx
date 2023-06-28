@@ -1,6 +1,6 @@
 import { createSignal, onMount } from "solid-js";
 import { walletPubkey } from "./Header";
-import { getProvider } from "../utils";
+import { getProvider } from "../helpers/utils";
 import idl from "../idl.json";
 import { Program, web3 } from "@coral-xyz/anchor";
 
