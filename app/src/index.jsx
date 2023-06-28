@@ -8,9 +8,9 @@ const root = document.getElementById("root");
 
 const Index = () => (
   <div class="w-11/12 md:w-3/4 mx-auto py-8 relative">
-    <Header title="Solid App" />
+    <Header title="Encrypted" />
 
-    {/* Show <App /> only when a wallet is connected */}
+    {/* Shows <App /> only when a wallet is connected */}
     <Show when={walletPubkey()}>
       <App />
     </Show>

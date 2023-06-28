@@ -40,18 +40,27 @@ function Header(props) {
     setBalance(null);
   };
 
+  const getAbbreviatedPubkey = () => {
+    let x = walletPubkey().toString();
+    return x.slice(0, 4) + "......." + x.slice(x.length - 4, x.length);
+  };
+
   const DisconnectWallet = () => (
-    <button
+    <div
       onClick={disconnectWallet}
       class={`flex items-center justify-end 
-        space-x-2 px-4 py-3
-        border-2 rounded-lg
-        bg-red-600 text-white hover:bg-red-700
-        hover:cursor-pointer
-        relative active:top-1`}
+      space-x-2 px-4 py-3
+      border-2 rounded-lg
+      bg-violet-600 text-white hover:bg-violet-700
+      hover:cursor-pointer
+      relative active:top-1`}
     >
-      Disconnect wallet
-    </button>
+      <image
+        src={phantomIcon}
+        class="relative bg-transparent transparent w-6 h-6"
+      />
+      <button>{getAbbreviatedPubkey()}</button>
+    </div>
   );
 
   return (

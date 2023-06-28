@@ -1,10 +1,10 @@
 import { Balance } from "./Balance";
-import { Vote } from "./Vote";
+import { Example } from "./Example";
 
 const App = () => (
   <>
     <Balance />
-    <Vote />
+    <Example />
   </>
 );
 
