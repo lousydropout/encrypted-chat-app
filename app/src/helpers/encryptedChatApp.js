@@ -1,16 +1,17 @@
 import { BN, web3 } from "@coral-xyz/anchor";
 import idl from "../assets/encrypted.json";
 import { program } from "../store/program";
-import { updateUser } from "../store/user";
-import { chatLogs, registry, setChatLogs, setRegistry } from "../store/chatapp";
-
+import { user } from "../store/user";
 import {
-  encrypt,
-  importPrivateKey,
-  importPublicKey,
-  stringifiedKeypair,
-  stringifyKeypair,
-} from "../helpers/crypto";
+  chatLogs,
+  registry,
+  setChatMessages,
+  setChatLogs,
+  setRegistry,
+  chatMessages,
+} from "../store/chatapp";
+
+import { decrypt, encrypt, importPublicKey } from "../helpers/crypto";
 import { walletPubkey } from "../components/Header";
 
 const fetchRegistryAccounts = async () => {
@@ -54,55 +55,43 @@ const initializeChat = async (alice, bob) => {
     })
     .rpc();
 
-  console.log("chatlog: ", results);
+  console.log("initializeChat results: ", results);
+  return results;
 };
 
 const sendMessage = async (alice, bob, timestamp, message) => {
   const aliceAccount = registry.accounts.filter(
     (x) => x.account.username === alice
   )[0];
-  console.log("aliceAccount: ", aliceAccount);
   const registryAccount = aliceAccount.publicKey;
-  console.log("registryAccount: ", registryAccount.toString());
   const aliceEncryptionKey = await importPublicKey(
     aliceAccount.account.messagingPubkey
   );
-  console.log("aliceEncryptionKey: ", aliceEncryptionKey.toString());
 
   const bobAccount = registry.accounts.filter(
     (x) => x.account.username === bob
   )[0];
-  console.log("bobAccount: ", bobAccount);
   const bobEncryptionKey = await importPublicKey(
     bobAccount.account.messagingPubkey
   );
-  console.log("bobEncryptionKey: ", bobEncryptionKey.toString());
 
   // encrypt message
   const msgForAlice = await encrypt(message, aliceEncryptionKey);
-  console.log("msgForAlice: ", msgForAlice);
   const msgForBob = await encrypt(message, bobEncryptionKey);
-  console.log("msgForBob: ", msgForBob);
 
   // chatlogs
-  console.log("chatLogs.accounts: ", chatLogs.accounts);
   const aliceChatAccount = chatLogs.accounts.filter(
     (x) => x.account.owner === alice
   )[0];
-  console.log("aliceChatAccount: ", aliceChatAccount);
   const aliceChatAccountPubkey = aliceChatAccount.publicKey;
-  console.log("aliceChatAccountPubkey: ", aliceChatAccountPubkey);
 
   const bobChatAccount = chatLogs.accounts.filter(
     (x) => x.account.owner === bob
   )[0];
-  console.log("bobChatAccount: ", bobChatAccount);
   const bobChatAccountPubkey = bobChatAccount.publicKey;
-  console.log("bobChatAccountPubkey: ", bobChatAccountPubkey);
 
   // get idx of next message
   const idx = aliceChatAccount.account.idx.toNumber();
-  console.log("idx: ", idx);
 
   // get messageAccounts
   const [aliceMessageAccount, ____] = web3.PublicKey.findProgramAddressSync(
@@ -110,21 +99,19 @@ const sendMessage = async (alice, bob, timestamp, message) => {
       Buffer.from("message"),
       Buffer.from(alice),
       Buffer.from(bob),
-      Buffer.from(new BN(0)),
+      new BN(idx).toArrayLike(Buffer, "le", 8),
     ],
     new web3.PublicKey(idl.metadata.address)
   );
-  console.log("aliceMessageAccount: ", aliceMessageAccount.toString());
   const [bobMessageAccount, _____] = web3.PublicKey.findProgramAddressSync(
     [
       Buffer.from("message"),
       Buffer.from(bob),
       Buffer.from(alice),
-      Buffer.from(new BN(0)),
+      new BN(idx).toArrayLike(Buffer, "le", 8),
     ],
     new web3.PublicKey(idl.metadata.address)
   );
-  console.log("bobMessageAccount: ", bobMessageAccount.toString());
 
   let results = await program()
     .methods.sendMessage(alice, bob, timestamp, msgForAlice, msgForBob)
@@ -139,14 +126,58 @@ const sendMessage = async (alice, bob, timestamp, message) => {
     })
     .rpc();
 
-  console.log("chatlog: ", results);
+  console.log("sendMessage results: ", results);
+  return results;
 };
 
-const fetchChatMessages = async () => {
-  let results = await program().account.messageAccount.all();
-  setChatLogs("accounts", results);
-  console.log("registry: ", chatLogs);
+const fetchChatMessages_legacy = async () => {
+  let messages = await program().account.messageAccount.all();
+  let results = [];
+  for (let i = 0; i < messages.length; i++) {
+    try {
+      let y = await decrypt(
+        messages[i].account.encryptedMessage,
+        user().decryptionKey
+      );
+      results.push({ ...messages[i].account, message: y, okay: true });
+    } catch (e) {}
+  }
 
+  setChatMessages("accounts", results);
+  return results;
+};
+
+const fetchChatMessages = async (conversation_parter) => {
+  const alice = user().username;
+  const bob = conversation_parter;
+  let chatlogs = await fetchChatLogsByOwner(alice);
+  let chat = chatlogs.filter((x) => x.account.chattingWith === bob)[0];
+  let lastIdx = chat.account.idx.toNumber();
+
+  let results = [];
+  for (let i = 0; i < lastIdx; i++) {
+    let [address, _] = web3.PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("message"),
+        Buffer.from(alice),
+        Buffer.from(bob),
+        new BN(i).toArrayLike(Buffer, "le", 8),
+      ],
+      new web3.PublicKey(idl.metadata.address)
+    );
+
+    let account = await program().account.messageAccount.fetch(address);
+    try {
+      let y = await decrypt(account.encryptedMessage, user().decryptionKey);
+      let result = { ...account, message: y };
+      console.log(y, { ...account, message: y });
+      results.push(result);
+    } catch (e) {}
+  }
+  console.log("results: ", results);
+
+  setChatMessages("accounts", results);
+  console.log("chatMessages: ", chatMessages.accounts);
   return results;
 };
 
@@ -154,6 +185,8 @@ export {
   fetchRegistryAccounts,
   fetchChatLogs,
   fetchChatLogsByOwner,
+  fetchChatMessages,
+  fetchChatMessages_legacy,
   initializeChat,
   sendMessage,
 };

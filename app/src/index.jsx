@@ -25,8 +25,7 @@ const Index = () => (
   <Router>
     <div class="flex flex-col h-screen w-11/12 md:w-3/4 mx-auto py-8 relative">
       <Header title="Encrypted" />
-      {/* Shows <App /> only when a wallet is connected */}
-      <Show when={user()?.loggedIn} fallback={Login}>
+      <Show when={user().loggedIn} fallback={Login}>
         <App />
       </Show>
     </div>
