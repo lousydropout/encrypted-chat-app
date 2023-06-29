@@ -84,7 +84,7 @@ pub struct Register<'info> {
     #[account(
         init,
         payer = signer,
-        space = 8 + 4 * 84 + std::mem::size_of::<RegistryAccount>(),
+        space = 8 + 4 * 216 + std::mem::size_of::<RegistryAccount>(),
         seeds = [b"registry", username.as_bytes()],
         bump,
     )]
@@ -147,7 +147,7 @@ pub struct SendMessage<'info> {
     #[account(
         init,
         payer = signer,
-        space = 8 + 4 * 140 +  std::mem::size_of::<MessageAccount>(),
+        space = 8 + 4 * 180 +  std::mem::size_of::<MessageAccount>(),
         seeds = [b"message", alice.as_bytes(), bob.as_bytes(), &alice_chat_account.idx.to_le_bytes()],
         bump
     )]
@@ -156,7 +156,7 @@ pub struct SendMessage<'info> {
     #[account(
         init,
         payer = signer,
-        space = 8 + 4 * 140 + std::mem::size_of::<MessageAccount>(),
+        space = 8 + 4 * 180 + std::mem::size_of::<MessageAccount>(),
         seeds = [b"message", bob.as_bytes(), alice.as_bytes(), &alice_chat_account.idx.to_le_bytes()],
         bump
     )]

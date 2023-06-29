@@ -1,8 +1,7 @@
 import { createSignal } from "solid-js";
-import { createStore } from "solid-js/store";
 
 const [keypair, setKeypair] = createSignal(null);
-const [stringifiedKeypair, setStringifiedKeypair] = createStore({});
+const [stringifiedKeypair, setStringifiedKeypair] = createSignal(null);
 
 /*
   Convert  an ArrayBuffer into a string
@@ -46,7 +45,7 @@ const generateKey = async () => {
     {
       name: "RSA-OAEP",
       // Consider using a 4096-bit key for systems that require long-term security
-      modulusLength: 256,
+      modulusLength: 2048,
       publicExponent: new Uint8Array([1, 0, 1]),
       hash: "SHA-256",
     },
@@ -128,7 +127,33 @@ function importPublicKey(pem) {
   );
 }
 
+const encrypt = async (plaintext, key) => {
+  let enc = new TextEncoder();
+  let encoded = enc.encode(plaintext);
+
+  let result = await window.crypto.subtle.encrypt(
+    { name: "RSA-OAEP" },
+    key,
+    encoded
+  );
+  return btoa(ab2str(result));
+};
+
+const decrypt = async (ciphertext, key) => {
+  let dec = new TextDecoder();
+  let decrypted = await window.crypto.subtle.decrypt(
+    { name: "RSA-OAEP" },
+    key,
+    str2ab(atob(ciphertext))
+  );
+  return dec.decode(decrypted);
+};
+
 export {
+  encrypt,
+  decrypt,
+  ab2str,
+  str2ab,
   generateKey,
   keypair,
   setKeypair,

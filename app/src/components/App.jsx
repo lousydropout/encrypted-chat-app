@@ -3,7 +3,7 @@ import { Example } from "./Example";
 
 const App = () => (
   <>
-    <Balance />
+    {/* <Balance /> */}
     <Example />
   </>
 );

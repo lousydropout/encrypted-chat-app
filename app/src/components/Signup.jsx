@@ -3,11 +3,17 @@ import { A } from "@solidjs/router";
 import { createStore } from "solid-js/store";
 import { toggleShowLogin } from "../store/showLogin";
 import { validate } from "../helpers/validations";
-import { stringifiedKeypair, stringifyKeypair } from "../crypto";
+import {
+  importPrivateKey,
+  importPublicKey,
+  stringifiedKeypair,
+  stringifyKeypair,
+} from "../crypto";
 import idl from "../assets/encrypted.json";
 import { program } from "../store/program";
 import { web3 } from "@coral-xyz/anchor";
-import { walletPubkey } from "./Header";
+import { connectWallet, walletPubkey } from "./Header";
+import { updateUser } from "../store/user";
 
 const ErrorMessage = (props) => (
   <span class="text-sm text-right text-red-400">{props.error}</span>
@@ -31,7 +37,9 @@ const SignupComponent = () => {
     // setErrors(validate(fields));
     console.log("fields: ", fields);
     if (program()) {
-      console.log("encryption key: ", stringifiedKeypair.publicKey);
+      if (!walletPubkey()) connectWallet();
+
+      console.log("encryption key: ", stringifiedKeypair().publicKey);
       const [registryAccount, bump] = web3.PublicKey.findProgramAddressSync(
         [Buffer.from("registry"), Buffer.from(fields.username)],
         new web3.PublicKey(idl.metadata.address)
@@ -40,7 +48,7 @@ const SignupComponent = () => {
       console.log("username: ", fields.username);
 
       let results = await program()
-        .methods.register(fields.username, stringifiedKeypair.publicKey)
+        .methods.register(fields.username, stringifiedKeypair().publicKey)
         .accounts({
           registryAccount: registryAccount.toString(),
           signer: walletPubkey().publicKey,
@@ -49,10 +57,21 @@ const SignupComponent = () => {
         .rpc();
       console.log("registry: ", results);
 
-      results = await program().account.registryAccount.all();
-      console.log("get all registries: ", results);
+      // results = await program().account.registryAccount.all();
+      // console.log("get all registries: ", results);
+
+      const privateKey = await importPrivateKey(
+        stringifiedKeypair().privateKey
+      );
+      const publicKey = await importPublicKey(stringifiedKeypair().publicKey);
+
+      updateUser({
+        loggedIn: true,
+        username: fields.username,
+        decryptionKey: privateKey,
+        encryptionKey: publicKey,
+      });
     }
-    console.log("SUBMIT");
   };
 
   return (
@@ -99,7 +118,7 @@ const SignupComponent = () => {
           />
 
           <Show
-            when={stringifiedKeypair}
+            when={stringifiedKeypair()}
             fallback={
               <button onClick={stringifyKeypair}>Generate password</button>
             }
@@ -118,7 +137,8 @@ const SignupComponent = () => {
               id="password"
               required
               class="w-full p-2 mt-1 mb-2 sm:mb-4 text-black bg-zinc-300 rounded"
-              value={stringifiedKeypair?.privateKey}
+              value={stringifiedKeypair()?.privateKey}
+              disabled
             />
           </Show>
 
@@ -128,9 +148,14 @@ const SignupComponent = () => {
               type="submit"
               class={`
                 mt-4 py-2 text-lg font-bold border w-[70%] rounded
-                text-blue-500hover:text-blue-300
-                border-blue-500  hover:border-blue-300
+                
               `}
+              classList={{
+                "text-blue-300 border-blue-300 hover:text-blue-500 hover:border-blue-500":
+                  stringifiedKeypair(),
+                "text-zinc-500 border-zinc-500": !stringifiedKeypair(),
+              }}
+              disabled={!stringifiedKeypair()}
             >
               Submit
             </button>

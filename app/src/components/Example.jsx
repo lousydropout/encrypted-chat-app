@@ -1,82 +1,23 @@
-import { Show, createSignal } from "solid-js";
-import {
-  generateKey,
-  importPrivateKey,
-  importPublicKey,
-  keypair,
-  setKeypair,
-  stringifiedKeypair,
-  stringifyKeypair,
-} from "../crypto.js";
+import { createSignal } from "solid-js";
+import { decrypt, encrypt, keypair } from "../crypto.js";
 
 const [message, setMessage] = createSignal("");
 const [encMessage, setEncMessage] = createSignal("");
 const [decMessage, setDecMessage] = createSignal("");
-const [prKey, setPrKey] = createSignal("");
-const [puKey, setPuKey] = createSignal("");
-
-const importKeys = async () => {
-  const priKey = await importPrivateKey(prKey());
-  const pubKey = await importPublicKey(puKey());
-
-  setKeypair({ publicKey: pubKey, privateKey: priKey });
-  console.log("keypair: ", keypair());
-};
 
 const encryptMessage = async () => {
-  let enc = new TextEncoder();
-  console.log("message(): ", message());
-  let encoded = enc.encode(message());
-  console.log("encoded(): ", encoded);
-  let result = await window.crypto.subtle.encrypt(
-    { name: "RSA-OAEP" },
-    keypair().publicKey,
-    encoded
-  );
-  console.log("result: ", result);
-  console.log("result: ", result.toString());
+  const result = encrypt(message(), keypair().publicKey);
   setEncMessage(result);
 };
 
 const decryptMessage = async () => {
-  let dec = new TextDecoder();
-  let decrypted = await window.crypto.subtle.decrypt(
-    { name: "RSA-OAEP" },
-    keypair().privateKey,
-    encMessage()
-  );
-  let result = dec.decode(decrypted);
+  const result = await decrypt(encMessage(), keypair().privateKey);
   setDecMessage(result);
 };
-
-const downloadPem = () => {};
 
 const Example = () => {
   return (
     <>
-      <h1>Encrypted</h1>
-      <button class="border-2 rounded-md p-4" onClick={generateKey}>
-        Generate keypair
-      </button>
-      <div class="flex justify-around items-center">
-        <div class="w-1/2">
-          <textarea
-            class="h-56 w-full border-2"
-            onInput={(e) => setPuKey(e.target.value)}
-          />
-        </div>
-        <div class="w-1/2">
-          <textarea
-            class="h-56 w-full border-2"
-            onInput={(e) => setPrKey(e.target.value)}
-          />
-        </div>
-      </div>
-      <button onClick={importKeys} class="border-2 rounded-lg p-4">
-        Import keys
-      </button>
-      <br />
-      <h3>Message</h3>
       <div class="flex justify-around items-center">
         <div class="w-1/2">
           <textarea
@@ -88,31 +29,20 @@ const Example = () => {
           </button>
         </div>
         <div class="w-1/2">
-          <textarea class="h-56 w-full border-2" value={encMessage()} />
+          <textarea
+            class="h-56 w-full border-2"
+            value={encMessage()}
+            onBlur={(e) => setEncMessage(e.target.value)}
+            onChange={(e) => setEncMessage(e.target.value)}
+            onInput={(e) => setEncMessage(e.target.value)}
+          />
           <button onClick={decryptMessage} class="border-2 rounded-lg p-4">
             Decrypt
           </button>
         </div>
       </div>
-      <div class="p-4 border-2 rounded-md h-32 w-full">{decMessage()}</div>
       <br />
-      <button onClick={stringifyKeypair} class="border-2 rounded-lg p-4">
-        Stringify
-      </button>
-      <Show when={stringifiedKeypair}>
-        <div>{stringifiedKeypair?.publicKey}</div>
-        <div>{stringifiedKeypair?.privateKey}</div>
-        <a
-          onClick={downloadPem}
-          class="border-2 rounded-lg p-4"
-          href={`data:text/plain;charset=utf-8,${encodeURIComponent(
-            stringifiedKeypair?.privateKey
-          )}`}
-          download="private"
-        >
-          Download
-        </a>
-      </Show>
+      <div class="p-4 border-2 rounded-md h-32 w-full">{decMessage()}</div>
     </>
   );
 };

@@ -13,6 +13,7 @@ import {
 import idl from "../assets/encrypted.json";
 import { program } from "../store/program";
 import { web3 } from "@coral-xyz/anchor";
+import { connectWallet, walletPubkey } from "./Header";
 
 const SigninComponent = () => {
   const [error, setError] = createSignal(null);
@@ -24,11 +25,15 @@ const SigninComponent = () => {
   };
 
   const updatePrivateKey = (e) => {
-    setStringifiedKeypair("privateKey", e.currentTarget.value);
+    setStringifiedKeypair((prev) => ({
+      ...prev,
+      privateKey: e.currentTarget.value,
+    }));
   };
 
   const submit = async (e) => {
     e.preventDefault();
+    if (!walletPubkey()) connectWallet();
 
     const [registryAccount, bump] = web3.PublicKey.findProgramAddressSync(
       [Buffer.from("registry"), Buffer.from(fields.username)],
@@ -39,7 +44,7 @@ const SigninComponent = () => {
     );
     console.log("results: ", results);
 
-    const privateKey = await importPrivateKey(stringifiedKeypair.privateKey);
+    const privateKey = await importPrivateKey(stringifiedKeypair().privateKey);
     const publicKey = await importPublicKey(results.messagingPubkey);
 
     updateUser({

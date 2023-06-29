@@ -3,22 +3,21 @@ import { Show, createSignal } from "solid-js";
 import { setBalance } from "../helpers/utils";
 import phantomIcon from "../assets/phantom-logo.png";
 import logoUrl from "../assets/logo.svg";
-import { hasLoggedIn } from "../store/hasLoggedIn";
 
 window.Buffer = Buffer;
 const [walletPubkey, setWalletPubkey] = createSignal(null);
 
-function Header(props) {
-  const connectWallet = async () => {
-    const { phantom } = window;
-    if (phantom) {
-      const response = await phantom.solana.connect();
-      setWalletPubkey(response.publicKey);
-    } else {
-      window.open("https://phantom.app/", "_blank");
-    }
-  };
+const connectWallet = async () => {
+  const { phantom } = window;
+  if (phantom) {
+    const response = await phantom.solana.connect();
+    setWalletPubkey(response.publicKey);
+  } else {
+    window.open("https://phantom.app/", "_blank");
+  }
+};
 
+function Header(props) {
   const ConnectWallet = () => (
     <div
       onClick={connectWallet}
@@ -82,4 +81,4 @@ function Header(props) {
   );
 }
 
-export { walletPubkey, setWalletPubkey, Header };
+export { walletPubkey, setWalletPubkey, connectWallet, Header };
