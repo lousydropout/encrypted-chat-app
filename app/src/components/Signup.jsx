@@ -82,7 +82,7 @@ const SignupComponent = () => {
         <p class="mt-2 text-sm text-center max-w">
           Already registered?
           <A
-            class="ml-1 font-semibold underline text-blue-400 hover:text-blue-300 hover:border-blue-300"
+            class="ml-1 font-semibold underline text-emerald-400 hover:text-emerald-300 hover:border-emerald-300"
             href="#"
             onClick={toggleShowLogin}
             tabIndex="0"
@@ -99,7 +99,7 @@ const SignupComponent = () => {
           onSubmit={submit}
         >
           {/* username */}
-          <label for="username" class="flex justify-between text-gray-300 ">
+          <label for="username" class="flex justify-between text-emerald-400 ">
             Username:
             <Show when={errors().username}>
               <ErrorMessage error={errors().username} />
@@ -111,7 +111,7 @@ const SignupComponent = () => {
             type="username"
             placeholder="Username"
             autocomplete="username"
-            class="w-full p-2 mt-1 mb-2 sm:mb-4 text-black bg-zinc-300 rounded ring-blue-900"
+            class="w-full p-2 mt-1 mb-2 sm:mb-4 text-black bg-zinc-300 rounded ring-emerald-900"
             required
             onInput={updateField}
             onBlur={updateField}
@@ -124,7 +124,7 @@ const SignupComponent = () => {
             }
           >
             {/* Password */}
-            <label for="password" class="flex justify-between text-gray-300">
+            <label for="password" class="flex justify-between text-emerald-400">
               Password:
               <Show when={errors().password}>
                 <ErrorMessage error={errors().password} />
@@ -151,7 +151,7 @@ const SignupComponent = () => {
                 
               `}
               classList={{
-                "text-blue-300 border-blue-300 hover:text-blue-500 hover:border-blue-500":
+                "text-emerald-400 border-emerald-400 hover:text-emerald-500 hover:border-emerald-500":
                   stringifiedKeypair(),
                 "text-zinc-500 border-zinc-500": !stringifiedKeypair(),
               }}

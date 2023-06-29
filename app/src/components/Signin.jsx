@@ -65,7 +65,7 @@ const SigninComponent = () => {
       <p class="mt-2 text-sm text-center max-w">
         Don't have an account?
         <A
-          class="ml-1 font-semibold underline text-blue-400 hover:text-blue-300 hover:border-blue-300"
+          class="ml-1 font-semibold underline text-emerald-400 hover:text-emerald-300 hover:border-emerald-300"
           href="#"
           onClick={toggleShowLogin}
           tabIndex="0"
@@ -82,7 +82,7 @@ const SigninComponent = () => {
         onSubmit={submit}
       >
         {/* username */}
-        <label for="username" class="flex justify-between text-gray-300">
+        <label for="username" class="flex justify-between text-emerald-400">
           Username:
         </label>
         <input
@@ -91,13 +91,13 @@ const SigninComponent = () => {
           type="username"
           placeholder="Username"
           autocomplete="username"
-          class="w-full p-2 mt-1 mb-2 sm:mb-4 text-black bg-zinc-300 rounded ring-blue-900"
+          class="w-full p-2 mt-1 mb-2 sm:mb-4 text-black bg-zinc-300 rounded ring-emerald-900"
           required
           onInput={updateField}
         />
 
         {/* Password */}
-        <label for="password" class="flex justify-between text-gray-300">
+        <label for="password" class="flex justify-between text-emerald-400">
           Password:
         </label>
         <input
@@ -116,7 +116,7 @@ const SigninComponent = () => {
         <div className="flex justify-center">
           <button
             type="submit"
-            class="text-lg font-bold text-blue-500 border-blue-500 border shadow-sm drop-shadow-lg w-[70%] py-2 mt-6 rounded hover:text-blue-300 hover:border-blue-300"
+            class="text-lg font-bold text-emerald-500 border-emerald-500 border shadow-sm drop-shadow-lg w-[70%] py-2 mt-6 rounded hover:text-emerald-300 hover:border-emerald-300"
           >
             Log in
           </button>

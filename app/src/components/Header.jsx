@@ -12,6 +12,7 @@ const connectWallet = async () => {
   if (phantom) {
     const response = await phantom.solana.connect();
     setWalletPubkey(response.publicKey);
+    console.log("walletPubkey(): ", walletPubkey());
   } else {
     window.open("https://phantom.app/", "_blank");
   }
@@ -20,19 +21,18 @@ const connectWallet = async () => {
 function Header(props) {
   const ConnectWallet = () => (
     <div
-      onClick={connectWallet}
+      // onClick={connectWallet}
       class={`flex items-center justify-end 
         space-x-2 px-4 py-3
         border-2 rounded-lg
-        border-blue-400 text-blue-400 hover:border-blue-500 hover:text-blue-500
-        hover:cursor-pointer
-        relative active:top-1`}
+        border-emerald-700 text-emerald-700
+        `}
     >
       <image
         src={phantomIcon}
         class="relative bg-transparent transparent w-6 h-6"
       />
-      <button>Connect wallet</button>
+      <div>Not connected</div>
     </div>
   );
 
@@ -48,19 +48,17 @@ function Header(props) {
 
   const DisconnectWallet = () => (
     <div
-      onClick={disconnectWallet}
-      class={`flex items-center justify-end 
+      class={`flex items-base justify-end 
       space-x-2 px-4 py-3
       border-2 rounded-lg
-      border-blue-500 text-white hover:border-blue-600
-      hover:cursor-pointer
-      relative active:top-1`}
+      border-emerald-500 text-emerald-500
+      `}
     >
       <image
         src={phantomIcon}
         class="relative bg-transparent transparent w-6 h-6"
       />
-      <button>{getAbbreviatedPubkey()}</button>
+      <div>{getAbbreviatedPubkey()}</div>
     </div>
   );
 
@@ -68,11 +66,7 @@ function Header(props) {
     <div className="flex justify-between items-center mb-12">
       <div class="flex justify-start items-end">
         <h1 class="text-4xl">{props.title}</h1>
-        <img
-          src={logoUrl}
-          alt="Neurodeploy logo"
-          class="my-2 sm:mb-6 w-10 sm:w-10"
-        />
+        <img src={logoUrl} alt="Encrypted" class="my-2 sm:mb-6 w-10 sm:w-10" />
       </div>
       <Show when={walletPubkey()} fallback={ConnectWallet}>
         <DisconnectWallet />
