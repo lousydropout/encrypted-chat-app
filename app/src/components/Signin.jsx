@@ -3,7 +3,16 @@ import { A } from "@solidjs/router";
 import { createStore } from "solid-js/store";
 import { toggleShowLogin } from "../store/showLogin";
 import { user, updateUser } from "../store/user";
-import { stringifiedKeypair, setStringifiedKeypair } from "../crypto";
+import {
+  stringifiedKeypair,
+  setStringifiedKeypair,
+  importPrivateKey,
+  importPublicKey,
+  setKeypair,
+} from "../crypto";
+import idl from "../assets/encrypted.json";
+import { program } from "../store/program";
+import { web3 } from "@coral-xyz/anchor";
 
 const SigninComponent = () => {
   const [error, setError] = createSignal(null);
@@ -16,18 +25,32 @@ const SigninComponent = () => {
 
   const updatePrivateKey = (e) => {
     setStringifiedKeypair("privateKey", e.currentTarget.value);
-    console.log("privateKey", stringifiedKeypair.privateKey);
   };
 
   const submit = async (e) => {
     e.preventDefault();
 
+    const [registryAccount, bump] = web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("registry"), Buffer.from(fields.username)],
+      new web3.PublicKey(idl.metadata.address)
+    );
+    let results = await program().account.registryAccount.fetch(
+      registryAccount
+    );
+    console.log("results: ", results);
+
+    const privateKey = await importPrivateKey(stringifiedKeypair.privateKey);
+    const publicKey = await importPublicKey(results.messagingPubkey);
+
     updateUser({
       loggedIn: true,
       username: fields.username,
-      decryptionKey: stringifiedKeypair.privateKey,
+      decryptionKey: privateKey,
+      encryptionKey: publicKey,
     });
-    console.log("logged in: ", user().loggedIn);
+
+    setKeypair({ privateKey, publicKey });
+    console.log("user: ", user());
   };
 
   return (

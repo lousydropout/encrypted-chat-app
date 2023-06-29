@@ -20,16 +20,21 @@ const importKeys = async () => {
   const pubKey = await importPublicKey(puKey());
 
   setKeypair({ publicKey: pubKey, privateKey: priKey });
+  console.log("keypair: ", keypair());
 };
 
 const encryptMessage = async () => {
   let enc = new TextEncoder();
+  console.log("message(): ", message());
   let encoded = enc.encode(message());
+  console.log("encoded(): ", encoded);
   let result = await window.crypto.subtle.encrypt(
     { name: "RSA-OAEP" },
     keypair().publicKey,
     encoded
   );
+  console.log("result: ", result);
+  console.log("result: ", result.toString());
   setEncMessage(result);
 };
 
@@ -95,13 +100,13 @@ const Example = () => {
         Stringify
       </button>
       <Show when={stringifiedKeypair}>
-        <div>{stringifiedKeypair.publicKey}</div>
-        <div>{stringifiedKeypair.privateKey}</div>
+        <div>{stringifiedKeypair?.publicKey}</div>
+        <div>{stringifiedKeypair?.privateKey}</div>
         <a
           onClick={downloadPem}
           class="border-2 rounded-lg p-4"
           href={`data:text/plain;charset=utf-8,${encodeURIComponent(
-            stringifiedKeypair.privateKey
+            stringifiedKeypair?.privateKey
           )}`}
           download="private"
         >

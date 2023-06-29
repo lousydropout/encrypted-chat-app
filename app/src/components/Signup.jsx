@@ -2,11 +2,11 @@ import { Show, createSignal } from "solid-js";
 import { A } from "@solidjs/router";
 import { createStore } from "solid-js/store";
 import { toggleShowLogin } from "../store/showLogin";
-import { validate, validated } from "../helpers/validations";
+import { validate } from "../helpers/validations";
 import { stringifiedKeypair, stringifyKeypair } from "../crypto";
 import idl from "../assets/encrypted.json";
 import { program } from "../store/program";
-import { Program, web3 } from "@coral-xyz/anchor";
+import { web3 } from "@coral-xyz/anchor";
 import { walletPubkey } from "./Header";
 
 const ErrorMessage = (props) => (

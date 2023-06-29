@@ -4,6 +4,7 @@ use anchor_lang::prelude::*;
 pub struct RegistryAccount {
     pub username: String,
     pub messaging_pubkey: String,
+    pub pubkey: Pubkey,
 }
 
 #[account]

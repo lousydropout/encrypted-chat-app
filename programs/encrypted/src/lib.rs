@@ -1,8 +1,9 @@
 use anchor_lang::prelude::*;
-declare_id!("EH315jfjYJjcom6QdQQXz2EViVQrKJ9numcPXP2RRfeZ");
+declare_id!("HWkxWXKvvrUi8EoS6xZ391ncPSr9dFNTw275HpGJ8Rwy");
 
+pub mod errors;
 pub mod states;
-use crate::states::*;
+use crate::{errors::*, states::*};
 
 #[program]
 mod encrypted {
@@ -17,6 +18,7 @@ mod encrypted {
 
         registry.username = username;
         registry.messaging_pubkey = messaging_pubkey;
+        registry.pubkey = ctx.accounts.signer.key();
 
         Ok(())
     }
@@ -40,11 +42,22 @@ mod encrypted {
     pub fn send_message(
         ctx: Context<SendMessage>,
         alice: String,
-        _bob: String,
+        bob: String,
         timestamp: String,
         message_encrypted_for_alice: String,
         message_encrypted_for_bob: String,
     ) -> Result<()> {
+        let pubkey = &ctx.accounts.registry_account.pubkey;
+        let username = &ctx.accounts.registry_account.username;
+
+        // check if signer pubkey equals alice's pubkey
+        require!(
+            *pubkey != ctx.accounts.signer.key(),
+            EncrytedAppError::Unauthorized
+        );
+        // check if username equals alice's
+        require!(*username != alice, EncrytedAppError::Unauthorized);
+
         let alice_message_account = &mut ctx.accounts.alice_message_account;
         alice_message_account.author = alice.clone();
         alice_message_account.timestamp = timestamp.clone();
@@ -108,18 +121,25 @@ pub struct InitChat<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(alice: String, _bob: String)]
+#[instruction(alice: String, bob: String)]
 pub struct SendMessage<'info> {
     #[account(
         mut,
-        seeds = [b"chat", _bob.as_bytes(), alice.as_bytes()],
+        seeds = [b"registry", alice.as_bytes()],
+        bump,
+    )]
+    pub registry_account: Account<'info, RegistryAccount>,
+
+    #[account(
+        mut,
+        seeds = [b"chat", alice.as_bytes(), bob.as_bytes()],
         bump,
     )]
     pub alice_chat_account: Account<'info, ChatAccount>,
 
     #[account(
         mut,
-        seeds = [b"chat", alice.as_bytes(), _bob.as_bytes()],
+        seeds = [b"chat", bob.as_bytes(), alice.as_bytes()],
         bump,
     )]
     pub bob_chat_account: Account<'info, ChatAccount>,
@@ -127,8 +147,8 @@ pub struct SendMessage<'info> {
     #[account(
         init,
         payer = signer,
-        space = 8 + std::mem::size_of::<MessageAccount>(),
-        seeds = [b"message", alice.as_bytes(), _bob.as_bytes(), &alice_chat_account.idx.to_le_bytes()],
+        space = 8 + 4 * 140 +  std::mem::size_of::<MessageAccount>(),
+        seeds = [b"message", alice.as_bytes(), bob.as_bytes(), &alice_chat_account.idx.to_le_bytes()],
         bump
     )]
     pub alice_message_account: Account<'info, MessageAccount>,
@@ -136,8 +156,8 @@ pub struct SendMessage<'info> {
     #[account(
         init,
         payer = signer,
-        space = 8 + std::mem::size_of::<MessageAccount>(),
-        seeds = [b"message", _bob.as_bytes(), alice.as_bytes(), &alice_chat_account.idx.to_le_bytes()],
+        space = 8 + 4 * 140 + std::mem::size_of::<MessageAccount>(),
+        seeds = [b"message", bob.as_bytes(), alice.as_bytes(), &alice_chat_account.idx.to_le_bytes()],
         bump
     )]
     pub bob_message_account: Account<'info, MessageAccount>,
