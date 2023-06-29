@@ -9,7 +9,7 @@ import {
   importPrivateKey,
   importPublicKey,
   setKeypair,
-} from "../crypto";
+} from "../helpers/crypto";
 import idl from "../assets/encrypted.json";
 import { program } from "../store/program";
 import { web3 } from "@coral-xyz/anchor";
@@ -42,7 +42,7 @@ const SigninComponent = () => {
     let results = await program().account.registryAccount.fetch(
       registryAccount
     );
-    console.log("results: ", results);
+    console.log("registryAccount: ", results);
 
     const privateKey = await importPrivateKey(stringifiedKeypair().privateKey);
     const publicKey = await importPublicKey(results.messagingPubkey);

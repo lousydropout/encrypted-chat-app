@@ -71,6 +71,11 @@
       "name": "sendMessage",
       "accounts": [
         {
+          "name": "registryAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "aliceChatAccount",
           "isMut": true,
           "isSigner": false
@@ -138,6 +143,10 @@
           {
             "name": "messagingPubkey",
             "type": "string"
+          },
+          {
+            "name": "pubkey",
+            "type": "publicKey"
           }
         ]
       }
@@ -181,6 +190,13 @@
           }
         ]
       }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Unauthorized",
+      "msg": "You are not authorized to perform this action."
     }
   ],
   "metadata": {

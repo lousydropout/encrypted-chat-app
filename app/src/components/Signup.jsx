@@ -8,7 +8,7 @@ import {
   importPublicKey,
   stringifiedKeypair,
   stringifyKeypair,
-} from "../crypto";
+} from "../helpers/crypto";
 import idl from "../assets/encrypted.json";
 import { program } from "../store/program";
 import { web3 } from "@coral-xyz/anchor";

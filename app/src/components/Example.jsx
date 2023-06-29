@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import { decrypt, encrypt, keypair } from "../crypto.js";
+import { decrypt, encrypt, keypair } from "../helpers/crypto.js";
 
 const [message, setMessage] = createSignal("");
 const [encMessage, setEncMessage] = createSignal("");

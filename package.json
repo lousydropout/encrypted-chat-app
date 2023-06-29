@@ -5,7 +5,8 @@
     },
     "dependencies": {
         "@coral-xyz/anchor": "^0.28.0",
-        "@solidjs/router": "^0.8.2"
+        "@solidjs/router": "^0.8.2",
+        "bs58": "^5.0.0"
     },
     "devDependencies": {
         "@types/bn.js": "^5.1.0",
