@@ -1,1 +1,1 @@
-# solana-encrypted-messaging
+# Encrypted
