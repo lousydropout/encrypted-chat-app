@@ -4,12 +4,9 @@ import Signup from "./Signup";
 
 const Login = () => {
   return (
-    <div class="h-full login-background">
-      <div class="flex justify-center ">
-        <Show when={showLogin()} fallback={Signup}>
-          <Signin />
-        </Show>
-      </div>
+    <div class="h-full login-background flex justify-center">
+      <h1>Sign in</h1>
+      <Signin />
     </div>
   );
 };

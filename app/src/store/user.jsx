@@ -2,12 +2,11 @@ import { createSignal } from "solid-js";
 // import { DOMAIN } from "../params/params";
 
 const KEY = `KEYUser`;
-
 const LOGGED_OUT = {
   loggedIn: false,
   username: null,
-  jwt: null,
-  expires: null,
+  decryptionKey: null,
+  encryptionKey: null,
 };
 
 const [user, setUser] = createSignal(LOGGED_OUT);

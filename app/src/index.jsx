@@ -1,23 +1,24 @@
 /* @refresh reload */
 import { onMount } from "solid-js";
-import { Show, render } from "solid-js/web";
+import { render } from "solid-js/web";
 import { Router } from "@solidjs/router";
 import { Program } from "@coral-xyz/anchor";
 import idl from "./assets/encrypted.json";
 import App from "./components/App";
-import { Header, connectWallet, walletPubkey } from "./components/Header";
-import Login from "./components/Login";
+import { Header } from "./components/Header";
 import { getProvider } from "./helpers/utils";
 import { setProgram } from "./store/program";
-import { user } from "./store/user";
 import "./index.css";
-// import { fetchRegistryAccounts } from "./helpers/encryptedChatApp";
+import Nav from "./components/Nav";
+import { grabfromCache } from "./store/user";
 
 const root = document.getElementById("root");
 
-// const getRegistry = async () => {
-//   await fetchRegistryAccounts();
-// };
+// Log out user from all tabs if logged out from one
+setInterval(() => {
+  const cached = grabfromCache();
+  if (!cached && user().loggedIn) logUserOut();
+}, 1000);
 
 const Index = () => {
   onMount(() => {
@@ -25,16 +26,25 @@ const Index = () => {
     const programId = idl.metadata.address;
     const _program = new Program(idl, programId, provider);
     setProgram(_program);
-    // getRegistry();
-    if (!walletPubkey()) connectWallet();
   });
   return (
     <Router>
-      <div class="flex flex-col h-screen w-11/12 md:w-3/4 mx-auto py-8 relative">
+      {/* Header */}
+      <div class="flex flex-col h-full p-4 bg-transparent overflow-y-auto md:overflow-y-hidden">
         <Header title="Encrypted" />
-        <Show when={user().loggedIn} fallback={Login}>
-          <App />
-        </Show>
+
+        {/* Center */}
+        <div class="grid grid-cols-[15rem_1fr] w-full h-full">
+          {/* SideNav */}
+          <nav class="hidden md:flex flex-col justify-between p-6 bg-transparent border-r-2 border-zinc-700 col-span-1 ">
+            <Nav />
+          </nav>
+
+          {/* Main */}
+          <main class="h-full w-full  p-12 col-span-1 overflow-y-auto">
+            <App />
+          </main>
+        </div>
       </div>
     </Router>
   );

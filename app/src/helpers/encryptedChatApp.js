@@ -15,20 +15,18 @@ import { decrypt, encrypt, importPublicKey } from "../helpers/crypto";
 import { walletPubkey } from "../components/Header";
 
 const fetchRegistryAccounts = async () => {
-  const results = await program().account.registryAccount.all();
-  setRegistry("accounts", results);
+  let results = await program().account.registryAccount.all();
+  setRegistry({ users: results });
   console.log("registry: ", registry);
-
-  return results;
 };
 
 const fetchChatLogs = async () => {
   return await program().account.chatAccount.all();
 };
 
-const fetchChatLogsByOwner = async () => {
+const fetchChatLogsByOwner = async (username) => {
   const all = await fetchChatLogs();
-  const results = all.filter((x) => x.account.owner === user().username);
+  const results = all.filter((x) => x.account.owner === username);
   setChatLogs("accounts", results);
   console.log("registry: ", chatLogs);
   return results;
@@ -59,7 +57,7 @@ const initializeChat = async (alice, bob) => {
 };
 
 const sendMessage = async (alice, bob, timestamp, message) => {
-  const aliceAccount = registry.accounts.filter(
+  const aliceAccount = registry.users.accounts.filter(
     (x) => x.account.username === alice
   )[0];
   const registryAccount = aliceAccount.publicKey;
@@ -67,7 +65,7 @@ const sendMessage = async (alice, bob, timestamp, message) => {
     aliceAccount.account.messagingPubkey
   );
 
-  const bobAccount = registry.accounts.filter(
+  const bobAccount = registry.users.accounts.filter(
     (x) => x.account.username === bob
   )[0];
   const bobEncryptionKey = await importPublicKey(
@@ -129,14 +127,14 @@ const sendMessage = async (alice, bob, timestamp, message) => {
   return results;
 };
 
-const fetchChatMessages_legacy = async () => {
+const fetchChatMessages_legacy = async (decryptionKey) => {
   let messages = await program().account.messageAccount.all();
   let results = [];
   for (let i = 0; i < messages.length; i++) {
     try {
       let y = await decrypt(
         messages[i].account.encryptedMessage,
-        user().decryptionKey
+        decryptionKey
       );
       results.push({ ...messages[i].account, message: y, okay: true });
     } catch (e) {}
@@ -146,12 +144,20 @@ const fetchChatMessages_legacy = async () => {
   return results;
 };
 
-const fetchChatMessages = async (conversation_parter) => {
-  const alice = user().username;
+const fetchChatMessages = async (username, conversation_parter) => {
   const bob = conversation_parter;
-  let chatlogs = await fetchChatLogsByOwner(alice);
-  let chat = chatlogs.filter((x) => x.account.chattingWith === bob)[0];
-  let lastIdx = chat.account.idx.toNumber();
+  let chatlogs = await fetchChatLogsByOwner(username);
+  let chat = chatlogs.filter((x) => x.account.chattingWith === bob);
+  console.log(
+    "chatlogs between ",
+    username,
+    " and ",
+    conversation_parter,
+    ": ",
+    chat
+  );
+  if (chat.length === 0) return [];
+  let lastIdx = chat[0].account.idx.toNumber();
 
   let results = [];
   for (let i = 0; i < lastIdx; i++) {

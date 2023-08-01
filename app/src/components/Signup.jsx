@@ -83,8 +83,7 @@ const SignupComponent = () => {
           Already registered?
           <A
             class="ml-1 font-semibold underline text-emerald-400 hover:text-emerald-300 hover:border-emerald-300"
-            href="#"
-            onClick={toggleShowLogin}
+            href="/sign-in"
             tabIndex="0"
           >
             Sign in

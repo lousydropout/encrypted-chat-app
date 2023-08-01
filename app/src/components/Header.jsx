@@ -21,11 +21,12 @@ const connectWallet = async () => {
 function Header(props) {
   const ConnectWallet = () => (
     <div
-      // onClick={connectWallet}
+      onClick={connectWallet}
       class={`flex items-center justify-end 
         space-x-2 px-4 py-3
         border-2 rounded-lg
-        border-emerald-700 text-emerald-700
+        border-emerald-500 text-emerald-500
+        cursor-pointer
         `}
     >
       <image
