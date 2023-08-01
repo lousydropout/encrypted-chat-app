@@ -65,6 +65,45 @@ const Home = () => {
         </div>
       </div>
 
+      {/* Reads messages*/}
+      <div class="flex justify-center items-center space-x-4">
+        <h3 class="text-2xl text-center">Messsages</h3>
+        <button
+          class="border-2 border-green-400 rounded-md p-2"
+          onClick={() => fetchChatMessages(user().username, convoPartner())}
+        >
+          Refresh
+        </button>
+      </div>
+
+      <div class="flex flex-col max-h-[55%] rounded-md bg-zinc-600 opacity-[99%] p-8 overflow-y-auto justify-start items-start my-4">
+        <For each={chatMessages.accounts}>
+          {(message, i) => (
+            <div
+              class="border rounded-md p-3"
+              classList={{
+                "self-end border-green-400 text-green-300 font-semibold":
+                  message.author === user().username,
+                "text-zinc-100": message.author !== user().username,
+              }}
+            >
+              {/* <div># {i}</div> */}
+              {/* <div>author: {message.author}</div> */}
+              <div
+                classList={{
+                  "text-green-300 opacity-60":
+                    message.author === user().username,
+                  "text-zinc-400": message.author !== user().username,
+                }}
+              >
+                {message.timestamp}
+              </div>
+              <div>{message.message}</div>
+            </div>
+          )}
+        </For>
+      </div>
+
       {/* Send message*/}
       <h3 class="text-2xl text-center">Send Messsage</h3>
       <div class="flex justify-between items-center my-4">
@@ -90,32 +129,6 @@ const Home = () => {
         >
           Send
         </button>
-      </div>
-
-      {/* Reads messages*/}
-      <div class="flex justify-center items-center space-x-4">
-        <h3 class="text-2xl text-center">Messsages</h3>
-        <button
-          class="border-2 border-green-400 rounded-md p-2"
-          onClick={() => fetchChatMessages(user().username, convoPartner())}
-        >
-          Refresh
-        </button>
-      </div>
-      <div class="flex flex-col justify-start items-start my-4">
-        <For each={chatMessages.accounts}>
-          {(message, i) => (
-            <div
-              class="border p-2"
-              classList={{ "self-end": message.author === user().username }}
-            >
-              <div># {i}</div>
-              <div>author: {message.author}</div>
-              <div>datetime: {message.timestamp}</div>
-              <div>decrypted: {message.message}</div>
-            </div>
-          )}
-        </For>
       </div>
     </div>
   );

@@ -5,11 +5,16 @@ import { createSignal } from "solid-js";
 
 const [balance, setBalance] = createSignal(null);
 
-const network = clusterApiUrl("devnet");
-const connection = new Connection(network, "processed");
+// const network = clusterApiUrl("devnet");
+// const connection = new Connection(network, "processed");
+const connection = new Connection(
+  "https://powerful-boldest-lambo.solana-devnet.discover.quiknode.pro/40adfdae5a4a4466080d9920e9bcf4ad821b92fb/"
+);
 
 const getProvider = () => {
-  const connection = new Connection(network, "processed");
+  const connection = new Connection(
+    "https://powerful-boldest-lambo.solana-devnet.discover.quiknode.pro/40adfdae5a4a4466080d9920e9bcf4ad821b92fb/"
+  );
   return new AnchorProvider(connection, window.solana, "processed");
 };
 
@@ -18,4 +23,4 @@ const getBalance = async () => {
   setBalance(lamports / LAMPORTS_PER_SOL);
 };
 
-export { network, connection, getProvider, getBalance, setBalance, balance };
+export { connection, getProvider, getBalance, setBalance, balance };
