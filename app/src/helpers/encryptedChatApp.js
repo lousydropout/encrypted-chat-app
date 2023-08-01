@@ -23,16 +23,15 @@ const fetchRegistryAccounts = async () => {
 };
 
 const fetchChatLogs = async () => {
-  const results = await program().account.chatAccount.all();
-  setChatLogs("accounts", results);
-  console.log("registry: ", chatLogs);
-
-  return results;
+  return await program().account.chatAccount.all();
 };
 
-const fetchChatLogsByOwner = async (owner) => {
-  const results = await fetchChatLogs();
-  return results.filter((x) => x.account.owner === owner);
+const fetchChatLogsByOwner = async () => {
+  const all = await fetchChatLogs();
+  const results = all.filter((x) => x.account.owner === user().username);
+  setChatLogs("accounts", results);
+  console.log("registry: ", chatLogs);
+  return results;
 };
 
 const initializeChat = async (alice, bob) => {

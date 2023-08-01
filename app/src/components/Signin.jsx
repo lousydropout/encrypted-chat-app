@@ -9,6 +9,7 @@ import {
   importPrivateKey,
   importPublicKey,
   setKeypair,
+  keypair,
 } from "../helpers/crypto";
 import idl from "../assets/encrypted.json";
 import { program } from "../store/program";
@@ -42,10 +43,11 @@ const SigninComponent = () => {
     let results = await program().account.registryAccount.fetch(
       registryAccount
     );
-    console.log("registryAccount: ", results);
 
     const privateKey = await importPrivateKey(stringifiedKeypair().privateKey);
     const publicKey = await importPublicKey(results.messagingPubkey);
+
+    setKeypair({ privateKey, publicKey });
 
     updateUser({
       loggedIn: true,
@@ -54,7 +56,6 @@ const SigninComponent = () => {
       encryptionKey: publicKey,
     });
 
-    setKeypair({ privateKey, publicKey });
     console.log("user: ", user());
   };
 

@@ -2,7 +2,7 @@
 seeds = false
 skip-lint = false
 [programs.devnet]
-encrypted = "HWkxWXKvvrUi8EoS6xZ391ncPSr9dFNTw275HpGJ8Rwy"
+encrypted = "BAkfv3c2i1Rtv3vRqp4HzMSVYGhtub6fQ7XXoitdWGgk"
 
 [registry]
 url = "https://api.apr.dev"

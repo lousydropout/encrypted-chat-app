@@ -45,7 +45,7 @@ const generateKey = async () => {
     {
       name: "RSA-OAEP",
       // Consider using a 4096-bit key for systems that require long-term security
-      modulusLength: 2048,
+      modulusLength: 1024,
       publicExponent: new Uint8Array([1, 0, 1]),
       hash: "SHA-256",
     },
@@ -71,7 +71,7 @@ Import a PEM encoded RSA private key, to use for RSA-PSS signing.
 Takes a string containing the PEM encoded key, and returns a Promise
 that will resolve to a CryptoKey representing the private key.
 */
-function importPrivateKey(pem) {
+async function importPrivateKey(pem) {
   // fetch the part of the PEM string between header and footer
   const pemHeader = "-----BEGIN PRIVATE KEY-----";
   const pemFooter = "-----END PRIVATE KEY-----";
@@ -90,16 +90,18 @@ function importPrivateKey(pem) {
   // convert from a binary string to an ArrayBuffer
   const binaryDer = str2ab(binaryDerString);
 
-  return window.crypto.subtle.importKey(
+  const result = await window.crypto.subtle.importKey(
     "pkcs8",
     binaryDer,
     { name: "RSA-OAEP", hash: "SHA-256" },
     true,
     ["decrypt"]
   );
+  console.log("importPrivateKey result: ", result);
+  return result;
 }
 
-function importPublicKey(pem) {
+async function importPublicKey(pem) {
   // fetch the part of the PEM string between header and footer
   const pemHeader = "-----BEGIN PUBLIC KEY-----";
   const pemFooter = "-----END PUBLIC KEY-----";
@@ -118,13 +120,15 @@ function importPublicKey(pem) {
   // convert from a binary string to an ArrayBuffer
   const binaryDer = str2ab(binaryDerString);
 
-  return window.crypto.subtle.importKey(
+  const result = await window.crypto.subtle.importKey(
     "spki",
     binaryDer,
     { name: "RSA-OAEP", hash: "SHA-256" },
     true,
     ["encrypt"]
   );
+  console.log("importPublicKey result: ", result);
+  return result;
 }
 
 const encrypt = async (plaintext, key) => {
