@@ -1,49 +1,31 @@
 import {
   fetchRegistryAccounts,
-  fetchChatLogs,
   fetchChatLogsByOwner,
   initializeChat,
   sendMessage,
   fetchChatMessages,
 } from "../helpers/encryptedChatApp";
-import {
-  chatLogs,
-  chatMessages,
-  registry,
-  setChatMessages,
-} from "../store/chatapp";
-import { For, createSignal, onMount } from "solid-js";
+import { chatMessages, registry } from "../store/chatapp";
+import { For, onMount } from "solid-js";
 import { convoPartner, setConvoPartner } from "../store/convoPartner";
 import { user } from "../store/user";
 import { createStore } from "solid-js/store";
+import { connectWallet, walletPubkey } from "./Header";
 
-const test = async () => {
+const initialize = async () => {
   await fetchRegistryAccounts();
   const chatlogs = await fetchChatLogsByOwner(user().username);
-  console.log("chatlogs: ", chatlogs);
-
-  // const chatlogs = await initializeChat("test2", "abc");
-  // send message
-  // const messageResult = await sendMessage(
-  //   "abc",
-  //   "test2",
-  //   new Date().toUTCString(),
-  //   "yo. this is a test message."
-  // );
-  // console.log("messageResult: ", messageResult);
-
-  // await fetchChatMessages(user().username, "test2");
-  // console.log("fetchChatMessages: ", chatMessages);
+  if (!walletPubkey()) connectWallet();
 };
 
 const Home = () => {
   const [fields, setFields] = createStore();
   const updateField = (e) => {
     const name = e.currentTarget.name;
-    console.log("name: ", e.currentTarget.value);
     setFields([name], e.currentTarget.value);
   };
-  onMount(async () => test());
+  onMount(async () => initialize());
+
   return (
     <div class="py-8 px-12 w-full h-full rounded-xl bg-zinc-700 overflow-y-scroll">
       {/* For Chat convo */}
@@ -98,7 +80,6 @@ const Home = () => {
           classList={{ "border-zinc-400 text-zinc-400": convoPartner() === "" }}
           disabled={convoPartner() === ""}
           onClick={() => {
-            console.log("convo partner: ", convoPartner());
             sendMessage(
               user().username,
               convoPartner(),
@@ -131,7 +112,6 @@ const Home = () => {
               <div># {i}</div>
               <div>author: {message.author}</div>
               <div>datetime: {message.timestamp}</div>
-              {/* <div>message: {message.encryptedMessage}</div> */}
               <div>decrypted: {message.message}</div>
             </div>
           )}

@@ -13,7 +13,6 @@ const connectWallet = async () => {
   if (phantom) {
     const response = await phantom.solana.connect();
     setWalletPubkey(response.publicKey);
-    console.log("walletPubkey(): ", walletPubkey());
   } else {
     window.open("https://phantom.app/", "_blank");
   }

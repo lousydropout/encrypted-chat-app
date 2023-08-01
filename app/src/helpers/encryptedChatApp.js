@@ -28,7 +28,6 @@ const fetchChatLogsByOwner = async (username) => {
   const all = await fetchChatLogs();
   const results = all.filter((x) => x.account.owner === username);
   setChatLogs("accounts", results);
-  console.log("registry: ", chatLogs);
   return results;
 };
 

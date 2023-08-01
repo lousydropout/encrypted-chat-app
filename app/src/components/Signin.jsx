@@ -22,7 +22,6 @@ const SigninComponent = () => {
 
   const updateField = (e) => {
     const name = e.currentTarget.name;
-    console.log("name: ", e.currentTarget.value);
     setFields([name], e.currentTarget.value);
   };
 
@@ -56,10 +55,7 @@ const SigninComponent = () => {
       decryptionKey: privateKey,
       encryptionKey: publicKey,
     });
-
-    console.log("user: ", user());
   };
-  console.log("user: ", user());
 
   return (
     // <h1>Sign in</h1>

@@ -33,19 +33,13 @@ const SignupComponent = () => {
 
   const submit = async (e) => {
     e.preventDefault();
-    console.log("clicked on submit");
-    // setErrors(validate(fields));
-    console.log("fields: ", fields);
     if (program()) {
       if (!walletPubkey()) connectWallet();
 
-      console.log("encryption key: ", stringifiedKeypair().publicKey);
       const [registryAccount, bump] = web3.PublicKey.findProgramAddressSync(
         [Buffer.from("registry"), Buffer.from(fields.username)],
         new web3.PublicKey(idl.metadata.address)
       );
-      console.log("registryAccount: ", registryAccount.toString());
-      console.log("username: ", fields.username);
 
       let results = await program()
         .methods.register(fields.username, stringifiedKeypair().publicKey)
@@ -55,10 +49,6 @@ const SignupComponent = () => {
           systemProgram: web3.SystemProgram.programId,
         })
         .rpc();
-      console.log("registry: ", results);
-
-      // results = await program().account.registryAccount.all();
-      // console.log("get all registries: ", results);
 
       const privateKey = await importPrivateKey(
         stringifiedKeypair().privateKey
