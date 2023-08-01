@@ -47,16 +47,16 @@ mod encrypted {
         message_encrypted_for_alice: String,
         message_encrypted_for_bob: String,
     ) -> Result<()> {
-        let pubkey = &ctx.accounts.registry_account.pubkey;
-        let username = &ctx.accounts.registry_account.username;
+        // let pubkey = &ctx.accounts.registry_account.pubkey;
+        // let username = &ctx.accounts.registry_account.username;
 
         // check if signer pubkey equals alice's pubkey
-        require!(
-            *pubkey != ctx.accounts.signer.key(),
-            EncrytedAppError::Unauthorized
-        );
+        // require!(
+        //     *pubkey != ctx.accounts.signer.key(),
+        //     EncrytedAppError::Unauthorized
+        // );
         // check if username equals alice's
-        require!(*username != alice, EncrytedAppError::Unauthorized);
+        // require!(*username != alice, EncrytedAppError::Unauthorized);
 
         let alice_message_account = &mut ctx.accounts.alice_message_account;
         alice_message_account.author = alice.clone();

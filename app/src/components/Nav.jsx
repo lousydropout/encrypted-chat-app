@@ -3,9 +3,9 @@ import { logUserOut } from "../store/user";
 
 // navs
 const top_navs = [
-  { name: "Home", route: "/", click: null },
   { name: "Sign In", route: "/sign-in", click: null },
   { name: "Sign Up", route: "/sign-up", click: null },
+  { name: "Chat", route: "/chat", click: null },
 ];
 const bottom_navs = [
   {

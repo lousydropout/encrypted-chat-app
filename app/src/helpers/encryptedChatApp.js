@@ -45,8 +45,8 @@ const initializeChat = async (alice, bob) => {
   let results = await program()
     .methods.initChat(alice, bob)
     .accounts({
-      aliceChatAccount: aliceChatAccount.toString(),
-      bobChatAccount: bobChatAccount.toString(),
+      aliceChatAccount,
+      bobChatAccount,
       signer: walletPubkey().PublicKey,
       systemProgram: web3.SystemProgram.programId,
     })
@@ -57,15 +57,16 @@ const initializeChat = async (alice, bob) => {
 };
 
 const sendMessage = async (alice, bob, timestamp, message) => {
-  const aliceAccount = registry.users.accounts.filter(
+  console.log("registry: ", registry);
+  console.log("registry.users: ", registry.users);
+  const aliceAccount = registry.users.filter(
     (x) => x.account.username === alice
   )[0];
-  const registryAccount = aliceAccount.publicKey;
   const aliceEncryptionKey = await importPublicKey(
     aliceAccount.account.messagingPubkey
   );
 
-  const bobAccount = registry.users.accounts.filter(
+  const bobAccount = registry.users.filter(
     (x) => x.account.username === bob
   )[0];
   const bobEncryptionKey = await importPublicKey(
@@ -77,18 +78,28 @@ const sendMessage = async (alice, bob, timestamp, message) => {
   const msgForBob = await encrypt(message, bobEncryptionKey);
 
   // chatlogs
-  const aliceChatAccount = chatLogs.accounts.filter(
-    (x) => x.account.owner === alice
-  )[0];
-  const aliceChatAccountPubkey = aliceChatAccount.publicKey;
+  // let aliceChats = chatLogs.accounts.filter((x) => x.account.owner === alice);
+  // console.log("chatLogs.accounts: ", chatLogs.accounts);
+  // console.log("aliceChats: ", aliceChats);
 
-  const bobChatAccount = chatLogs.accounts.filter(
-    (x) => x.account.owner === bob
-  )[0];
-  const bobChatAccountPubkey = bobChatAccount.publicKey;
+  // const idx = aliceChats.length;
+  const idx = chatMessages.accounts.length;
+  console.log("idx: ", idx);
 
-  // get idx of next message
-  const idx = aliceChatAccount.account.idx.toNumber();
+  // get reigistry account
+  const [registryAccount, _] = web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("registry"), Buffer.from(alice)],
+    new web3.PublicKey(idl.metadata.address)
+  );
+  // get chatAccounts
+  const [aliceChatAccount, __] = web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("chat"), Buffer.from(alice), Buffer.from(bob)],
+    new web3.PublicKey(idl.metadata.address)
+  );
+  const [bobChatAccount, ___] = web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("chat"), Buffer.from(bob), Buffer.from(alice)],
+    new web3.PublicKey(idl.metadata.address)
+  );
 
   // get messageAccounts
   const [aliceMessageAccount, ____] = web3.PublicKey.findProgramAddressSync(
@@ -110,14 +121,16 @@ const sendMessage = async (alice, bob, timestamp, message) => {
     new web3.PublicKey(idl.metadata.address)
   );
 
+  console.log("walletPubkey(): ", walletPubkey());
+
   let results = await program()
     .methods.sendMessage(alice, bob, timestamp, msgForAlice, msgForBob)
     .accounts({
-      registryAccount: registryAccount.toString(),
-      aliceChatAccount: aliceChatAccountPubkey.toString(),
-      bobChatAccount: bobChatAccountPubkey.toString(),
-      aliceMessageAccount: aliceMessageAccount.toString(),
-      bobMessageAccount: bobMessageAccount.toString(),
+      registryAccount,
+      aliceChatAccount,
+      bobChatAccount,
+      aliceMessageAccount,
+      bobMessageAccount,
       signer: walletPubkey().PublicKey,
       systemProgram: web3.SystemProgram.programId,
     })
@@ -164,7 +177,7 @@ const fetchChatMessages = async (username, conversation_parter) => {
     let [address, _] = web3.PublicKey.findProgramAddressSync(
       [
         Buffer.from("message"),
-        Buffer.from(alice),
+        Buffer.from(username),
         Buffer.from(bob),
         new BN(i).toArrayLike(Buffer, "le", 8),
       ],

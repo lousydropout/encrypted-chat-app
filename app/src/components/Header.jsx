@@ -3,6 +3,7 @@ import { Show, createSignal } from "solid-js";
 import { setBalance } from "../helpers/utils";
 import phantomIcon from "../assets/phantom-logo.png";
 import logoUrl from "../assets/logo.svg";
+import { user } from "../store/user";
 
 window.Buffer = Buffer;
 const [walletPubkey, setWalletPubkey] = createSignal(null);
@@ -69,9 +70,14 @@ function Header(props) {
         <h1 class="text-4xl">{props.title}</h1>
         <img src={logoUrl} alt="Encrypted" class="my-2 sm:mb-6 w-10 sm:w-10" />
       </div>
-      <Show when={walletPubkey()} fallback={ConnectWallet}>
-        <DisconnectWallet />
-      </Show>
+      <div class="flex justify-between items-center space-x-8">
+        <Show when={user().loggedIn}>
+          <h3 class="text-xl">{user().username}</h3>
+        </Show>
+        <Show when={walletPubkey()} fallback={ConnectWallet}>
+          <DisconnectWallet />
+        </Show>
+      </div>
     </div>
   );
 }
