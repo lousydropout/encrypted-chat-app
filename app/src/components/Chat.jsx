@@ -27,7 +27,7 @@ const Home = () => {
   onMount(async () => initialize());
 
   return (
-    <div class="py-8 px-12 w-full h-full rounded-xl bg-zinc-700 overflow-y-scroll">
+    <div class="py-8 px-12 w-full h-[80%] rounded-xl bg-zinc-700 overflow-y-scroll">
       {/* For Chat convo */}
       <div class="flex flex-col">
         <label for="convo_partner" class="flex justify-between text-gray-300 ">
@@ -76,7 +76,7 @@ const Home = () => {
         </button>
       </div>
 
-      <div class="flex flex-col max-h-[55%] rounded-md bg-zinc-600 opacity-[99%] p-8 overflow-y-auto justify-start items-start my-4">
+      <div class="flex flex-col max-h-[50%] rounded-md bg-zinc-600 opacity-[99%] p-8 overflow-y-auto justify-start items-start my-4">
         <For each={chatMessages.accounts}>
           {(message, i) => (
             <div

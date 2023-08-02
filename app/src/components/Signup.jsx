@@ -80,11 +80,11 @@ const SignupComponent = () => {
           </A>
         </p>
 
-        <hr class="my-2 sm:my-4 border-zinc-400" />
+        <hr class="my-4 border-zinc-400" />
 
         {/* form */}
         <form
-          class="py-4 px-6 sm:px-8 sm:py-10 h-fit xs:w-96 sm:w-full rounded-md bg-zinc-700"
+          class="px-8 py-10 h-fit w-full rounded-md bg-zinc-700"
           onSubmit={submit}
         >
           {/* username */}
@@ -100,7 +100,7 @@ const SignupComponent = () => {
             type="username"
             placeholder="Username"
             autocomplete="username"
-            class="w-full p-2 mt-1 mb-2 sm:mb-4 text-black bg-zinc-300 rounded ring-emerald-900"
+            class="w-full p-2 mt-1 mb-4 text-black bg-zinc-300 rounded ring-emerald-900"
             required
             onInput={updateField}
             onBlur={updateField}
@@ -125,7 +125,7 @@ const SignupComponent = () => {
               name="password"
               id="password"
               required
-              class="w-full p-2 mt-1 mb-2 sm:mb-4 text-black bg-zinc-300 rounded"
+              class="w-full p-2 mt-1 mb-4 text-black bg-zinc-300 rounded"
               value={stringifiedKeypair()?.privateKey}
               disabled
             />

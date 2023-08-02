@@ -67,7 +67,7 @@ function Header(props) {
     <div className="flex justify-between items-center mb-12">
       <div class="flex justify-start items-end">
         <h1 class="text-4xl">{props.title}</h1>
-        <img src={logoUrl} alt="Encrypted" class="my-2 sm:mb-6 w-10 sm:w-10" />
+        <img src={logoUrl} alt="Encrypted" class="mb-6 w-10" />
       </div>
       <div class="flex justify-between items-center space-x-8">
         <Show when={user().loggedIn}>

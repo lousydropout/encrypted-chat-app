@@ -30,13 +30,13 @@ const Index = () => {
   return (
     <Router>
       {/* Header */}
-      <div class="flex flex-col h-full p-4 bg-transparent overflow-y-auto md:overflow-y-hidden">
+      <div class="flex flex-col h-full p-4 bg-transparent overflow-y-hidden">
         <Header title="Encrypted" />
 
         {/* Center */}
         <div class="grid grid-cols-[15rem_1fr] w-full h-full">
           {/* SideNav */}
-          <nav class="hidden md:flex flex-col justify-between p-6 bg-transparent border-r-2 border-zinc-700 col-span-1 ">
+          <nav class="flex flex-col h-[90%] justify-between p-6 bg-transparent border-r-2 border-zinc-700 col-span-1">
             <Nav />
           </nav>
 
