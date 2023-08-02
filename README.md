@@ -49,7 +49,7 @@ $ pnpm install
 $ pnpm run dev
 ```
 
-Then, open the link as provided by the above commands. Typically, this would be `http://localhost:3000`.
+Then, open the link using `Firefox` (other browers's password managers are incompatible) as provided by the above commands. Typically, this would be `http://localhost:3000`.
 
 ## Shortcomings and lessons learned
 
