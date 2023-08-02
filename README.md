@@ -55,7 +55,9 @@ Then, open the link as provided by the above commands. Typically, this would be 
 
 There are a number of shortcomings with our design choices. Some are due to intentional choices; others, unintended.
 
-### Using as
+### Using asymmetric encryption
+
+Although we remain resolute in our belief that `asymmetric encryption` was the correct choice, said choice is not without consequences. One such consequence is that messages have a size limit. With our choice of `asymmetric encryption` for `Encrypted`, the current size limit is approximately `120` characters.
 
 ### Storing both sides of a conversation in the same chain
 
@@ -70,3 +72,75 @@ We also opted to have `PDA`s `seeds` utilize the users' usernames. We thought th
 Our assumption is that using usernames (`Strings`), which are of variable length, is a no-go. Our queries have always ended up returning all messages in the `PDA` instead, a very inefficient process because the frontend now has to filter through a bunch of irrelevant messages for the few that are relevant.
 
 Further, this has the unfortunate consequence that, with each additional message sent using `Encrypted`, the amount of work needed for the frontend to receive **any** message also increases. We should have used the `pubkeys` in the `PDA seeds` instead.
+
+## `Encrypted`'s smart contract
+
+Despite the shortcomings, we are proud of how simple the smart contract for `Encrypted` is (since much of the work takes place off-chain) and so will include here in this readme as well.
+
+If you wanna see the `PDA` and `account` definitions as well, they are included in the `Accounts.md` file (it's also not long).
+
+```rust
+#[program]
+mod encrypted {
+    use super::*;
+
+    pub fn register(
+        ctx: Context<Register>,
+        username: String,
+        messaging_pubkey: String,
+    ) -> Result<()> {
+        let registry = &mut ctx.accounts.registry_account;
+
+        registry.username = username;
+        registry.messaging_pubkey = messaging_pubkey;
+        registry.pubkey = ctx.accounts.signer.key();
+
+        Ok(())
+    }
+
+    pub fn init_chat(ctx: Context<InitChat>, alice: String, bob: String) -> Result<()> {
+        let alice_chat_account = &mut ctx.accounts.alice_chat_account;
+        let bob_chat_account = &mut ctx.accounts.bob_chat_account;
+
+        alice_chat_account.idx = 0;
+        bob_chat_account.idx = 0;
+
+        alice_chat_account.owner = alice.clone();
+        alice_chat_account.chatting_with = bob.clone();
+
+        bob_chat_account.owner = bob;
+        bob_chat_account.chatting_with = alice;
+
+        Ok(())
+    }
+
+    pub fn send_message(
+        ctx: Context<SendMessage>,
+        alice: String,
+        bob: String,
+        timestamp: String,
+        message_encrypted_for_alice: String,
+        message_encrypted_for_bob: String,
+    ) -> Result<()> {
+        let alice_message_account = &mut ctx.accounts.alice_message_account;
+        alice_message_account.author = alice.clone();
+        alice_message_account.timestamp = timestamp.clone();
+        alice_message_account.encrypted_message = message_encrypted_for_alice;
+
+        let bob_message_account = &mut ctx.accounts.bob_message_account;
+        bob_message_account.author = alice.clone();
+        bob_message_account.timestamp = timestamp;
+        bob_message_account.encrypted_message = message_encrypted_for_bob;
+
+        let alice_chat_account = &mut ctx.accounts.alice_chat_account;
+        alice_chat_account.idx = alice_chat_account.idx.checked_add(1).unwrap();
+
+        let bob_chat_account = &mut ctx.accounts.bob_chat_account;
+        bob_chat_account.idx = bob_chat_account.idx.checked_add(1).unwrap();
+
+        Ok(())
+    }
+}
+```
+
+Note that certain checks have been removed due to, again, certain design choices whose consequences we only realized much later.
