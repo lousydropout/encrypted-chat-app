@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "",
   "scripts": {
-    "copy-idl": "cp ../target/idl/encrypted.json src/assets/",
+    "copy-idl": "cp ./encrypted.json src/assets/",
     "start": "pnpm copy-idl; vite",
     "dev": "pnpm copy-idl; vite",
     "build": "pnpm copy-idl; vite build",

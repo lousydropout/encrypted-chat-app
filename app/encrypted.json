@@ -1,0 +1,205 @@
+{
+  "version": "0.1.0",
+  "name": "encrypted",
+  "instructions": [
+    {
+      "name": "register",
+      "accounts": [
+        {
+          "name": "registryAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "name": "messagingPubkey",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "initChat",
+      "accounts": [
+        {
+          "name": "aliceChatAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bobChatAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "alice",
+          "type": "string"
+        },
+        {
+          "name": "bob",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "sendMessage",
+      "accounts": [
+        {
+          "name": "registryAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "aliceChatAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bobChatAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "aliceMessageAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bobMessageAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "alice",
+          "type": "string"
+        },
+        {
+          "name": "bob",
+          "type": "string"
+        },
+        {
+          "name": "timestamp",
+          "type": "string"
+        },
+        {
+          "name": "messageEncryptedForAlice",
+          "type": "string"
+        },
+        {
+          "name": "messageEncryptedForBob",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "RegistryAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "username",
+            "type": "string"
+          },
+          {
+            "name": "messagingPubkey",
+            "type": "string"
+          },
+          {
+            "name": "pubkey",
+            "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MessageAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "author",
+            "type": "string"
+          },
+          {
+            "name": "timestamp",
+            "type": "string"
+          },
+          {
+            "name": "encryptedMessage",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ChatAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "string"
+          },
+          {
+            "name": "chattingWith",
+            "type": "string"
+          },
+          {
+            "name": "idx",
+            "type": "u64"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Unauthorized",
+      "msg": "You are not authorized to perform this action."
+    }
+  ],
+  "metadata": {
+    "address": "BAkfv3c2i1Rtv3vRqp4HzMSVYGhtub6fQ7XXoitdWGgk"
+  }
+}
